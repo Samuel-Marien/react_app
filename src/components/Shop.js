@@ -146,22 +146,30 @@ const Shop = (props) => {
   const { setDisplaySuperBoost } = useContext(Context);
   const { setDisplayXtraBoost } = useContext(Context);
   const { miniBoostCounter, setMiniBoostCounter } = useContext(Context);
+  const { boostIsAvailable, setBoostIsAvailable } = useContext(Context);
 
   const CountTimer = (props) => {
     const countUp = () => setCount((count) => count + props);
     setInterval(countUp, 1000);
   };
 
-  const bonusCdTimer = (props) => {
+  const bonusCdTimer = (props, currentBoost, setCurrentBoost, boostDps) => {
+    if (!boostIsAvailable) {
+      return;
+    }
     let IntervalId = null;
-    setMiniBoostCounter(miniBoostCounter + props);
+    setCurrentBoost(currentBoost + props);
     const bonusCountDown = () =>
-      setMiniBoostCounter((time) => {
+      setCurrentBoost((time) => {
         if (time > 0) {
+          setDps(dps + boostDps); //to change
+          setCount((count) => count + boostDps); // to change
           return time - 1;
         } else {
-          setMiniBoostCounter(props);
+          setCurrentBoost(0);
+          setDps(dps + 0);
           clearInterval(IntervalId);
+          setBoostIsAvailable(true);
         }
       });
     IntervalId = setInterval(bonusCountDown, 1000);
@@ -229,12 +237,17 @@ const Shop = (props) => {
   };
 
   const handleBoostClick = (event) => {
-    if (event.currentTarget.id === 'boost1') {
+    if (event.currentTarget.id === 'boost1' && boostIsAvailable) {
+      setBoostIsAvailable(false);
       items.boost.miniBoost.price += items.boost.miniBoost.price * 2;
       setboostCount(boostCount + 1);
       setDisplayMiniBoost((displayMiniBoost) => (displayMiniBoost = true));
-      bonusCdTimer(items.boost.miniBoost.time);
-      console.log(InitialState.boost);
+      bonusCdTimer(
+        items.boost.miniBoost.time,
+        miniBoostCounter,
+        setMiniBoostCounter,
+        items.boost.miniBoost.dps
+      );
     } else if (event.currentTarget.id === 'boost2') {
       items.boost.middleBoost.price += items.boost.middleBoost.price * 2;
       setboostCount(boostCount + 1);
@@ -245,7 +258,7 @@ const Shop = (props) => {
       items.boost.superBoost.price += items.boost.superBoost.price * 2;
       setboostCount(boostCount + 1);
       setDisplaySuperBoost((displaySuperBoost) => (displaySuperBoost = true));
-    } else {
+    } else if (event.currentTarget.id === 'boost4') {
       items.boost.xtraBoost.price += items.boost.xtraBoost.price * 2;
       setboostCount(boostCount + 1);
       setDisplayXtraBoost((displayXtraBoost) => (displayXtraBoost = true));
@@ -258,18 +271,11 @@ const Shop = (props) => {
       <ul>
         <h3 className="titleFont">Army</h3>
         <StyledThumbnail
-          style={{
-            background: '#333633',
-          }}
+          style={{ background: '#333633' }}
           onClick={handleClick}
           id="gecko"
         >
-          <GiGecko
-            style={{
-              fontSize: 40,
-              color: '#5a785b',
-            }}
-          />
+          <GiGecko style={{ fontSize: 40, color: '#5a785b' }} />
           <div
             className="text-center w-50"
             style={{

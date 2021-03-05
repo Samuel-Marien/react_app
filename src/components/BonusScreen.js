@@ -38,11 +38,12 @@ const BonusScreen = (props) => {
   const { displaySuperBoost } = useContext(Context);
   const { displayXtraBoost } = useContext(Context);
   const { miniBoostCounter } = useContext(Context);
+  const { boostIsAvailable } = useContext(Context);
 
   return (
     <StyledDiv>
       <StyledBtn>
-        {displayMiniBoost ? (
+        {!boostIsAvailable ? (
           <div>
             <GiMonsterGrasp
               style={{ fontSize: 50, color: '#47412d', opacity: '100%' }}

@@ -15,6 +15,7 @@ export const Provider = (props) => {
   const [displaySuperBoost, setDisplaySuperBoost] = useState(false);
   const [displayXtraBoost, setDisplayXtraBoost] = useState(false);
   const [miniBoostCounter, setMiniBoostCounter] = useState(0);
+  const [boostIsAvailable, setBoostIsAvailable] = useState(true);
 
   return (
     <Context.Provider
@@ -48,6 +49,8 @@ export const Provider = (props) => {
         setDisplayXtraBoost,
         miniBoostCounter,
         setMiniBoostCounter,
+        boostIsAvailable,
+        setBoostIsAvailable,
       }}
     />
   );
